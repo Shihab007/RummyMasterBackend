@@ -52,6 +52,7 @@ class GameSession {
     }
   }
 
+  // from here card will draw
   draw(playerId) {
     if (this.state !== "AWAIT_DRAW")
       throw new Error("Invalid state");
@@ -66,6 +67,7 @@ class GameSession {
     return tile;
   }
 
+    // from here card will descard
   discard(playerId, tileId) {
     if (this.state !== "AWAIT_DISCARD")
       throw new Error("Must draw first");
@@ -88,10 +90,35 @@ class GameSession {
     return tile;
   }
 
+  // for player win declaration 
+  declareWin(playerId) {
+
+  if (playerId !== this.currentTurn)
+    throw new Error("Not your turn");
+
+  const isValid = this.checkWin(playerId);
+
+  if (!isValid)
+    throw new Error("Invalid win");
+
+  this.winner = playerId;
+  this.state = "GAME_ENDED";
+
+  return true;
+ }
+
   switchTurn() {
     this.currentTurn =
       this.players.find(p => p !== this.currentTurn);
   }
+
+  checkWin(playerId) {
+  return Validator.isWinningHand(
+    this.hands[playerId],
+    this.jokerColor,
+    this.jokerNumber
+  );
+}
 }
 
 module.exports = GameSession;
