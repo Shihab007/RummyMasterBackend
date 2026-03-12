@@ -16,6 +16,9 @@ class Deck {
         this.tiles.push(new Tile(color, number));
       }
     }
+    // Total: 104 tiles (4 colors × 13 numbers × 2 copies)
+    // NOTE: 2 false joker tiles are part of full Okey rules (106 total)
+    // Held for Milestone 2 when we build that mechanic
   }
 
   shuffle() {
