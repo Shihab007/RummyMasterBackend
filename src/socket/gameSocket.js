@@ -35,7 +35,7 @@ module.exports = function setupGameSocket(io) {
         });
 
       } catch (err) {
-        // ✅ Deck ran out — end game gracefully as a draw
+        // Deck ran out — end game gracefully as a draw
         if (err.isDeckEmpty) {
           io.to(roomId).emit("game_over", {
             winner: null,
@@ -51,7 +51,7 @@ module.exports = function setupGameSocket(io) {
       }
     });
 
-    // ✅ FIX: Draw tile from the discard pile — was completely missing
+    // FIX: Draw tile from the discard pile — was completely missing
     socket.on("draw_from_discard", ({ roomId }) => {
       const game = matchmaking.games.get(roomId);
       if (!game) return socket.emit("error_message", "Game not found");
@@ -92,7 +92,7 @@ module.exports = function setupGameSocket(io) {
           state: game.state
         });
 
-        // ✅ Emit turn with state so next player knows to draw (not discard)
+        // Emit turn with state so next player knows to draw (not discard)
         io.to(roomId).emit("turn", {
           player: game.currentTurn,
           state: game.state  // will always be "AWAIT_DRAW" here
@@ -133,7 +133,7 @@ module.exports = function setupGameSocket(io) {
     // RECONNECTION
     // ─────────────────────────────────────────
 
-    // ✅ FIX: Player reconnects mid-game — restore their state
+    // FIX: Player reconnects mid-game — restore their state
     socket.on("reconnect_game", ({ roomId, playerId }) => {
       const game = matchmaking.games.get(roomId);
 
@@ -160,7 +160,7 @@ module.exports = function setupGameSocket(io) {
     // DISCONNECT
     // ─────────────────────────────────────────
 
-    // ✅ FIX: Clean up on disconnect
+    // FIX: Clean up on disconnect
     socket.on("disconnect", () => {
       console.log("Player disconnected:", socket.id);
 

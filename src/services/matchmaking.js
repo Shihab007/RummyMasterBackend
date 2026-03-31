@@ -7,14 +7,14 @@ const games = new Map();   // roomId → GameSession
 // Add player to matchmaking queue
 function addPlayer(socket, io) {
 
-  // ✅ FIX 1: Prevent duplicate queue entries
+  // FIX 1: Prevent duplicate queue entries
   // If player is already in queue (e.g. double-click Play), ignore
   if (queue.includes(socket.id)) {
     console.log(`Player already in queue: ${socket.id}`);
     return;
   }
 
-  // ✅ FIX 2: Store socket reference separately, not in queue array
+  // FIX 2: Store socket reference separately, not in queue array
   // This way queue only holds IDs — lightweight and safe
   queue.push(socket.id);
   socketMap.set(socket.id, socket);
@@ -30,7 +30,7 @@ function addPlayer(socket, io) {
     const player1 = socketMap.get(player1Id);
     const player2 = socketMap.get(player2Id);
 
-    // ✅ FIX 3: Verify both sockets are still connected before matching
+    // FIX 3: Verify both sockets are still connected before matching
     // This handles the ghost player case — if socket disconnected while in queue
     if (!player1 || !player1.connected) {
       console.log(`Ghost player detected: ${player1Id}, skipping`);
@@ -72,12 +72,12 @@ function addPlayer(socket, io) {
       roomId: game.id,
       opponent: player2Id,
       hand: game.hands[player1Id],
-      opponentTileCount: game.hands[player2Id].length, // ✅ NEW: so Unity can render face-down tiles
+      opponentTileCount: game.hands[player2Id].length, // so Unity can render face-down tiles
       joker: {
         color: game.jokerColor,
         number: game.jokerNumber
       },
-      scores: game.scores // ✅ NEW: initial score state
+      scores: game.scores // NEW: initial score state
     });
 
     // Send match data to Player 2
@@ -85,15 +85,15 @@ function addPlayer(socket, io) {
       roomId: game.id,
       opponent: player1Id,
       hand: game.hands[player2Id],
-      opponentTileCount: game.hands[player1Id].length, // ✅ NEW
+      opponentTileCount: game.hands[player1Id].length, 
       joker: {
         color: game.jokerColor,
         number: game.jokerNumber
       },
-      scores: game.scores // ✅ NEW
+      scores: game.scores 
     });
 
-    // ✅ Emit turn WITH state so client knows whether to draw or discard
+    // Emit turn WITH state so client knows whether to draw or discard
     io.to(game.id).emit("turn", {
       player: game.currentTurn,
       state: game.state  // "AWAIT_DRAW" or "AWAIT_DISCARD"
@@ -101,7 +101,7 @@ function addPlayer(socket, io) {
   }
 }
 
-// ✅ FIX 4: Remove player from queue on disconnect
+// FIX 4: Remove player from queue on disconnect
 // Called from gameSocket.js disconnect handler
 function removePlayer(socketId) {
   const idx = queue.indexOf(socketId);
