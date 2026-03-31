@@ -7,7 +7,7 @@ class Tile {
     this.color = color;
     this.number = number;
     this.isJoker = false;
-    this.isFalseJoker = isFalseJoker; // ✅
+    this.isFalseJoker = isFalseJoker; 
   }
 }
 

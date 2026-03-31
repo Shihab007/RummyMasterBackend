@@ -3,7 +3,7 @@ const { io } = require("socket.io-client");
 const player1 = io("http://localhost:3000");
 const player2 = io("http://localhost:3000");
 
-// ✅ FIX: Both players store their own roomId and hand separately
+// FIX: Both players store their own roomId and hand separately
 let p1 = { roomId: null, hand: [], id: null };
 let p2 = { roomId: null, hand: [], id: null };
 
@@ -13,13 +13,13 @@ let p2 = { roomId: null, hand: [], id: null };
 
 player1.on("connect", () => {
   p1.id = player1.id;
-  console.log("✅ Player1 connected:", player1.id);
+  console.log(" Player1 connected:", player1.id);
   player1.emit("join_queue");
 });
 
 player2.on("connect", () => {
   p2.id = player2.id;
-  console.log("✅ Player2 connected:", player2.id);
+  console.log(" Player2 connected:", player2.id);
   player2.emit("join_queue");
 });
 
@@ -38,7 +38,7 @@ player1.on("match_found", (data) => {
 });
 
 player2.on("match_found", (data) => {
-  p2.roomId = data.roomId;         // ✅ FIX: player2 stores roomId too
+  p2.roomId = data.roomId;         // FIX: player2 stores roomId too
   p2.hand = [...data.hand];
   console.log("\n🎮 Player2 match found!");
   console.log("   Room:", data.roomId);
@@ -47,7 +47,7 @@ player2.on("match_found", (data) => {
 
 // ─────────────────────────────────────────
 // TURN HANDLING
-// ✅ FIX: turn event is now { player, state }
+// FIX: turn event is now { player, state }
 // state tells us AWAIT_DRAW vs AWAIT_DISCARD
 // so the client knows whether to draw first or discard directly
 // ─────────────────────────────────────────

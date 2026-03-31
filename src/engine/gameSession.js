@@ -5,8 +5,6 @@ const Validator = require("./validator");
 class GameSession {
   constructor(player1Id, player2Id) {
 
-    // ✅ FIX 1: Use UUID instead of Date.now() to prevent ID collisions
-    // Two games created in the same millisecond would get the same ID with Date.now()
     this.id = uuidv4();
 
     this.players = [player1Id, player2Id];
@@ -20,17 +18,15 @@ class GameSession {
 
     this.discardPile = [];
 
-    // ✅ FIX 2: Scoring system — each player starts with 20 points per Okey rules
     this.scores = {
       [player1Id]: 20,
       [player2Id]: 20
     };
 
-    // First player gets 15 tiles and starts in AWAIT_DISCARD
     this.currentTurn = player1Id;
-    this.state = "AWAIT_DISCARD"; // ✅ FIX 3: starts as AWAIT_DISCARD (first player already has extra tile)
+    this.state = "AWAIT_DISCARD";
     this.winner = null;
-    this.winType = null; // "normal" | "seven_pairs" | "joker_discard"
+    this.winType = null; 
 
     this.setupGame();
   }
@@ -39,7 +35,7 @@ class GameSession {
     // Draw indicator tile to determine joker
     this.indicatorTile = this.deck.draw();
 
-    // ✅ Joker is same color as indicator, number is +1 (wraps 13 → 1)
+    // Joker is same color as indicator, number is +1 (wraps 13 → 1)
     this.jokerColor = this.indicatorTile.color;
     this.jokerNumber = this.indicatorTile.number === 13
       ? 1
@@ -52,7 +48,7 @@ class GameSession {
       }
     });
 
-    // ✅ FIX 4: Correct dealing per Okey rules
+    // FIX 4: Correct dealing per Okey rules
     // Deal 14 tiles to each player first
     for (let i = 0; i < 14; i++) {
       for (let player of this.players) {
@@ -70,7 +66,7 @@ class GameSession {
     console.log(`Joker: ${this.jokerColor} ${this.jokerNumber}`);
   }
 
-  // ✅ Draw tile from the deck
+  // Draw tile from the deck
   draw(playerId) {
     if (this.state !== "AWAIT_DRAW")
       throw new Error("Invalid state: must wait for draw phase");
@@ -93,7 +89,7 @@ class GameSession {
     return tile;
   }
 
-  // ✅ FIX 5: Draw from discard pile — missing core mechanic
+  // FIX 5: Draw from discard pile — missing core mechanic
   drawFromDiscard(playerId) {
     if (this.state !== "AWAIT_DRAW")
       throw new Error("Invalid state: must wait for draw phase");
@@ -158,7 +154,7 @@ class GameSession {
     this.winner = playerId;
     this.state = "GAME_ENDED";
 
-    // ✅ FIX 6: Apply scoring per Okey rules
+    // FIX 6: Apply scoring per Okey rules
     // Seven pairs = 4 points lost by each other player
     // Normal win   = 2 points lost by each other player
     const pointsLost = isSevenPairs ? 4 : 2;
@@ -186,7 +182,7 @@ class GameSession {
     return Validator.isWinningHand(this.hands[playerId], this.jokerColor, this.jokerNumber);
   }
 
-  // ✅ Returns full game state — used for reconnection
+  // Returns full game state — used for reconnection
   getStateForPlayer(playerId) {
     return {
       roomId: this.id,

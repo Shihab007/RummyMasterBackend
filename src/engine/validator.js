@@ -5,7 +5,7 @@ class Validator {
     return tile.color === jokerColor && tile.number === jokerNumber;
   }
 
-  // ✅ FIX 1: Try Form Set — Same Number, DISTINCT Colors (was missing distinct color check)
+  // FIX 1: Try Form Set — Same Number, DISTINCT Colors (was missing distinct color check)
   static tryFormSet(tile, tiles, jokerColor, jokerNumber) {
     const jokers = tiles.filter(t => this.isJoker(t, jokerColor, jokerNumber));
 
@@ -13,7 +13,7 @@ class Validator {
       t => t.number === tile.number && !this.isJoker(t, jokerColor, jokerNumber)
     );
 
-    // ✅ FIX: Deduplicate by color — a set cannot have two tiles of the same color
+    // FIX: Deduplicate by color — a set cannot have two tiles of the same color
     // e.g. Red-5, Red-5, Blue-5 is NOT a valid set
     const uniqueColorTiles = [];
     const seenColors = new Set();
@@ -59,7 +59,7 @@ class Validator {
   // Try Form Run — Same Color, Consecutive Numbers
   // Jokers can fill gaps in the sequence
   static tryFormRun(tile, tiles, jokerColor, jokerNumber) {
-    // ✅ Skip if this tile itself is a joker — let canFormGroups handle joker-first hands
+    // Skip if this tile itself is a joker — let canFormGroups handle joker-first hands
     if (this.isJoker(tile, jokerColor, jokerNumber)) return false;
 
     const color = tile.color;
@@ -119,7 +119,7 @@ class Validator {
         }
       }
 
-      // ✅ Also try starting a run with jokers BEFORE this tile
+      // Also try starting a run with jokers BEFORE this tile
       // e.g. joker, joker, Red-5 is a valid run
       if (jokers.length >= 2 && sequence.length < 3) {
         let prefixSequence = [];
@@ -154,7 +154,7 @@ class Validator {
     return false;
   }
 
-  // ✅ FIX 2: Seven Pairs win condition — was completely missing
+  // FIX 2: Seven Pairs win condition — was completely missing
   // A winning hand of at least 7 pairs (identical color + number)
   // Jokers can substitute for any unpaired tile
   static isSevenPairs(tiles, jokerColor, jokerNumber) {
