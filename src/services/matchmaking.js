@@ -1,27 +1,22 @@
 const GameSession = require("../engine/gameSession");
 
-const queue = [];          // stores socket IDs only (not socket objects)
-const socketMap = new Map(); // socketId → socket object
-const games = new Map();   // roomId → GameSession
+const queue = [];          
+const socketMap = new Map(); 
+const games = new Map();   
 
-// Add player to matchmaking queue
+
 function addPlayer(socket, io) {
 
-  // FIX 1: Prevent duplicate queue entries
-  // If player is already in queue (e.g. double-click Play), ignore
   if (queue.includes(socket.id)) {
     console.log(`Player already in queue: ${socket.id}`);
     return;
   }
 
-  // FIX 2: Store socket reference separately, not in queue array
-  // This way queue only holds IDs — lightweight and safe
   queue.push(socket.id);
   socketMap.set(socket.id, socket);
 
   console.log(`Player queued: ${socket.id} | Queue size: ${queue.length}`);
 
-  // If we have 2 players, start a match
   if (queue.length >= 2) {
 
     const player1Id = queue.shift();
@@ -30,12 +25,9 @@ function addPlayer(socket, io) {
     const player1 = socketMap.get(player1Id);
     const player2 = socketMap.get(player2Id);
 
-    // FIX 3: Verify both sockets are still connected before matching
-    // This handles the ghost player case — if socket disconnected while in queue
     if (!player1 || !player1.connected) {
       console.log(`Ghost player detected: ${player1Id}, skipping`);
       socketMap.delete(player1Id);
-      // Put player2 back in queue and try again
       if (player2 && player2.connected) {
         queue.unshift(player2Id);
       }

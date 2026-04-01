@@ -1,11 +1,9 @@
 class Validator {
 
-  // Check if a tile is the joker
   static isJoker(tile, jokerColor, jokerNumber) {
     return tile.color === jokerColor && tile.number === jokerNumber;
   }
 
-  // FIX 1: Try Form Set — Same Number, DISTINCT Colors (was missing distinct color check)
   static tryFormSet(tile, tiles, jokerColor, jokerNumber) {
     const jokers = tiles.filter(t => this.isJoker(t, jokerColor, jokerNumber));
 
@@ -13,8 +11,6 @@ class Validator {
       t => t.number === tile.number && !this.isJoker(t, jokerColor, jokerNumber)
     );
 
-    // FIX: Deduplicate by color — a set cannot have two tiles of the same color
-    // e.g. Red-5, Red-5, Blue-5 is NOT a valid set
     const uniqueColorTiles = [];
     const seenColors = new Set();
     for (const t of sameNumber) {
@@ -24,7 +20,6 @@ class Validator {
       }
     }
 
-    // Set can be 3 or 4 tiles max (4 colors max)
     const totalCount = uniqueColorTiles.length + jokers.length;
     if (totalCount < 3) return false;
 
@@ -34,7 +29,6 @@ class Validator {
       if (needed >= 0 && needed <= jokers.length) {
         let remainingTiles = [...tiles];
 
-        // Remove the unique color tiles used
         uniqueColorTiles.forEach(t => {
           const idx = remainingTiles.findIndex(x => x.id === t.id);
           if (idx !== -1) remainingTiles.splice(idx, 1);
